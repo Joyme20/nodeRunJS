@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div style="height: 1000px;"></div>
+<img src=""/>
+<script>
+    function getFixed(obj){
+        //获取非行间属性
+        function getStyle(obj,styleName){
+            if (obj.currentStyle){
+                return obj.currentStyle[styleName];
+            }
+            else{
+                return getComputedStyle(obj,null)[styleName];
+            }
+        }
+        //要获取图片相对网页顶部的距离，但图片有被定位的父级
+        var iLeft=0;
+        var iTop=0;
+        var oParent=obj;
+        while(oParent){
+            if (oParent.tagName=="HTML"){
+                break;
+            }
+            iLeft+=oParent.offsetLeft;
+            iTop+=oParent.offsetTop;
+            if (oParent!=obj){
+                iLeft+=parseInt(getStyle(oParent,"borderWidth"));//offsetLeft不包括边框，因此要把边框加上
+                iTop+=parseInt(getStyle(oParent,"borderWidth"));
+            }
+            oParent=oParent.offsetParent;
+        }
+        return [iLeft,iTop];//当 break 后itop就是图片相对网页顶部的距离
+    }
+    let _src = "./8d62accc181e968cb5783e8643ac03fe-sz_57438.png"
+    window.onload=window.onscroll=function (){
+
+        var aImg=document.getElementsByTagName("img");
+
+        var bodyScrollTop=document.body.scrollTop||document.documentElement.scrollTop;
+        var scrollBottom=bodyScrollTop+document.documentElement.clientHeight;
+        for (var i=0; i<aImg.length; i++){
+            if (getFixed(aImg[i])[1]<=scrollBottom){//此时说明这图片已经在可视区域内，应该开始加载了
+                // aImg[i].src=aImg[i].getAttribute(_src);
+                aImg[i].src=_src
+                // console.log(aImg[i].getAttribute("src"))
+            }
+        }
+    }
+
+    async function timeout() {
+        return 'hello world'
+    }
+    console.log(timeout());
+    console.log('虽然在后面，但是我先执行');
+</script>
+
+</body>
+</html>
